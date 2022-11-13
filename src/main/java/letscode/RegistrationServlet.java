@@ -1,6 +1,6 @@
 package letscode;
 
-import letscode.Services.UserService;
+import letscode.Services.User;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -28,8 +28,8 @@ public class RegistrationServlet extends HttpServlet{
 
         if (login != null && password != null && email != null)
         {
-            UserService user = new UserService(login,password,email);
-            if(UserRepository.userRepository.addUser(user))
+            User user = new User(login,password,email);
+            if(UserRepository.instance.addUser(user))
             {
                 resp.sendRedirect("/login");
             }

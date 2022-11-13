@@ -1,56 +1,41 @@
 package letscode;
 
-import letscode.Services.UserService;
-
+import letscode.Services.User;
 import javax.servlet.http.Cookie;
-import java.util.HashMap;
-import java.util.Map;
+import org.hibernate.Session;
 
 public class UserRepository {
-    public static UserRepository userRepository = new UserRepository();
-    private final Map<String, UserService> users = new HashMap<>();
+    public static UserRepository instance = new UserRepository();
 
-    public UserService getUserByLogin(String login)
-    {
-        return users.get(login);
-    }
-    public boolean addUser(UserService user)
-    {
-        String login = user.getLogin();
-        if(users.containsKey(login))
-        {
+    public boolean addUser(User user){
+        try(Session session = SessionManager.getSession()){
+            session.beginTransaction();
+            session.persist(user);
+            session.getTransaction().commit();
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
             return false;
         }
-        else
-        {
-            users.put(login, user);
-            return true;
-        }
+        return true;
     }
-    public UserService getUserFromCookie(Cookie[] cookies)
-    {
-        String login = null;
-        String email = null;
-        String password = null;
-        if(cookies !=null)
-        {
+    public User getUserByLogin(String login){
+        User user = null;
+        try(Session session = SessionManager.getSession()){
+            user = session.byNaturalId(User.class).using("login",login).load();
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            return user;
+        }
+        return user;
+    }
+    public User getUserFromCookie(Cookie[] cookies){
+        if(cookies !=null) {
             for(Cookie cookie: cookies) {
-                if("login".equals(cookie.getName()))
-                {
-                    login = cookie.getValue();
+                if("login".equals(cookie.getName())) {
+                    return this.getUserByLogin(cookie.getValue());
                 }
-                else if("email".equals(cookie.getName()))
-                {
-                    email = cookie.getValue();
-                }
-                else if("password".equals(cookie.getName()))
-                {
-                    password = cookie.getValue();
-                }
-            }
-            if(login != null && email != null && password != null)
-            {
-               return new UserService(login,password,email);
             }
         }
         return null;

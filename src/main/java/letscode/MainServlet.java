@@ -1,8 +1,7 @@
 package letscode;
 
-import letscode.Services.UserService;
+import letscode.Services.User;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,9 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MainServlet extends HttpServlet
 {
@@ -27,17 +23,23 @@ public class MainServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
     {
         String pathParam = req.getParameter(PathParameter);
-        UserService user = UserRepository.userRepository.getUserFromCookie(req.getCookies());
+        User user = UserRepository.instance.getUserFromCookie(req.getCookies());
         if (user == null)
         {
-            resp.sendRedirect("/WEB-INF/login");
-        }
-        if (pathParam == null || pathParam.equals("null") || !pathParam.startsWith("C:\\"+user.getLogin()+"\\"))
-        {
-            pathParam = "C:\\"+user.getLogin();
+            resp.sendRedirect("/login");
+            return;
         }
 
-        Path path = Paths.get(pathParam);
+        System.out.println(pathParam);
+        Path path = null;
+        if (pathParam != null) path = Paths.get(pathParam).toAbsolutePath();
+
+        if (path == null || pathParam.equals("null") || !path.toString().startsWith(System.getProperty("user.home")+"/"+user.getLogin()+"/"))
+        {
+            pathParam = System.getProperty("user.home")+"/"+user.getLogin();
+        }
+
+        path = Paths.get(pathParam).toAbsolutePath();
 
         if (!Files.exists(path))
         {

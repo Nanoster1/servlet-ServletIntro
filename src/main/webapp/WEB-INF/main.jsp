@@ -11,6 +11,7 @@
 </head>
 <header>
     <%=new Date()%>
+    <a href="/login?logout=true">Logout</a>
 </header>
 <body>
 <h1>${rootFile.absolutePath}</h1>

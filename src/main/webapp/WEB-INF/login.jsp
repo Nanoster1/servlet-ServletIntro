@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Helo</title>
+    <title>login</title>
 </head>
 <body>
   <form class="" method="post">
@@ -20,5 +20,6 @@
       </button>
     </p>
   </form>
+  <a href="register">Register</a>
 </body>
 </html>

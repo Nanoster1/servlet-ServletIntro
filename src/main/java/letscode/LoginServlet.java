@@ -1,6 +1,6 @@
 package letscode;
 
-import letscode.Services.UserService;
+import letscode.Services.User;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,6 +18,13 @@ public class LoginServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
     {
+        String isLogout = req.getParameter("logout");
+        if (isLogout != null && Boolean.valueOf(isLogout))
+        {
+            resp.addCookie(new Cookie("login", null));
+            resp.addCookie(new Cookie("email", null));
+            resp.addCookie(new Cookie("password", null));
+        }
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/login.jsp");
         requestDispatcher.forward(req, resp);
     }
@@ -29,7 +36,7 @@ public class LoginServlet extends HttpServlet
 
         if (login != null && password != null)
         {
-            UserService user = UserRepository.userRepository.getUserByLogin(login);
+            User user = UserRepository.instance.getUserByLogin(login);
             if(user != null && user.getPassword().equals(password))
             {
                 resp.addCookie(new Cookie("login", user.getLogin()));
