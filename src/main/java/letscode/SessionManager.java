@@ -10,6 +10,10 @@ import java.nio.file.Files;
 public class SessionManager {
     private static SessionFactory sessionFactory;
 
+    public static Session getSession(){
+        return sessionFactory.openSession();
+    }
+
     static{
         try {
             Configuration config = new Configuration();
@@ -21,9 +25,5 @@ public class SessionManager {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    public static Session getSession(){
-        return sessionFactory.openSession();
     }
 }

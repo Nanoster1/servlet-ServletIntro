@@ -4,8 +4,8 @@ import letscode.Services.User;
 import javax.servlet.http.Cookie;
 import org.hibernate.Session;
 
-public class UserRepository {
-    public static UserRepository instance = new UserRepository();
+public class UserRepository implements IUserRepository{
+    public static IUserRepository instance = new UserRepositoryJdbc();
 
     public boolean addUser(User user){
         try(Session session = SessionManager.getSession()){
